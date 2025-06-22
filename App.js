@@ -16,6 +16,7 @@ import {
   Switch,
   StatusBar,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import {
   NavigationContainer,
@@ -29,12 +30,12 @@ import { Ionicons } from '@expo/vector-icons';
 
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
+import OnboardingScreen from './screens/OnboardingScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 export const ThemeContext = createContext();
 
-/* ---------- DATA ---------- */
 const data = [
   {
     key: 'Biografi',
@@ -70,11 +71,11 @@ const data = [
    {
     key: 'Pariwisata',
     title: 'Pariwisata Papua Barat',
-    content: 'Papua barat Papua Barat memiliki banyak tempat wisata alam yang sangat indah, eksotis, dan masih alami. Berikut adalah beberapa wisata terkenal di Papua Barat yang wajib dikunjungi :\n\n' +
-    '1. RAJA EMPAT.\n\n' +
-    'Raja Ampat adalah surga wisata bahari yang mendunia, terletak di ujung barat Papua. Terdiri dari lebih dari 1.500 pulau kecil, pulau karang, dan atol, dengan empat pulau utama: Waigeo, Batanta, Salawati, dan Misool. Raja Ampat menyimpan keanekaragaman hayati laut tertinggi di dunia. Air lautnya sangat jernih dengan terumbu karang yang berwarna-warni Daya Tarik iving & snorkeling kelas dunia (lebih dari 1.300 spesies ikan dan 600 jenis karang),emandangan bukit karst di Pianemo dan Wayag,Sunset romantis dan kehidupan kampung adatWisata edukasi ekosistem laut dan konservas.\n\n' +
+    content: 'Papua barat memiliki banyak tempat wisata alam yang sangat indah, eksotis, dan masih alami. Berikut adalah beberapa wisata terkenal di Papua Barat yang wajib dikunjungi :\n\n' +
+    '1. RAJA EMPAT\n\n' +
+    'Raja Ampat adalah surga wisata bahari yang mendunia, terletak di ujung barat Papua. Terdiri dari lebih dari 1.500 pulau kecil, pulau karang, dan atol, dengan empat pulau utama: Waigeo, Batanta, Salawati, dan Misool. Raja Ampat menyimpan keanekaragaman hayati laut tertinggi di dunia. Air lautnya sangat jernih dengan terumbu karang yang berwarna-warni Daya Tarik iving & snorkeling kelas dunia (lebih dari 1.300 spesies ikan dan 600 jenis karang),Pemandangan bukit karst di Pianemo dan Wayag,Sunset romantis dan kehidupan kampung adatWisata edukasi ekosistem laut dan konservas.\n\n' +
     '2. PULAU MANSINAM\n\n' +
-    'Pulau Mansinam adalah tempat bersejarah karena menjadi titik masuknya penyebaran agama Kristen di Tanah Papua pada tahun 1855 oleh dua misionaris Jerman, Ottow dan Geissler. Pulau ini dianggap sakral oleh umat Kristiani di Papua dan setiap 5 Februari diperingati sebagai hari bersejarah.Daya Tarik Patung Yesus setinggi 30 meter di atas bukit,Pantai bersih, air laut jernih, cocok snorkeling dan berenang,Wisata religi dan budaya lokal\n\n' +
+    'Pulau Mansinam adalah tempat bersejarah karena menjadi titik masuknya penyebaran agama Kristen di Tanah Papua pada tahun 1855 oleh dua misionaris Jerman, Ottow dan Geissler. Pulau ini dianggap sakral oleh umat Kristiani di Papua dan setiap 5 Februari diperingati sebagai hari bersejarah. Daya Tarik Patung Yesus setinggi 30 meter di atas bukit, pantai bersih, air laut jernih, cocok snorkeling dan berenang,Wisata religi dan budaya lokal\n\n' +
     '3.TAMAN NASIONAL TELUK CENDRAWASIH\n\n' +
     'aman Nasional Teluk Cenderawasih merupakan taman laut terbesar di Indonesia, luasnya mencapai 1,4 juta hektare. Dikenal sebagai tempat berenang bersama hiu paus (whale shark) secara alami dan aman. Daya Tarik Bertemu langsung dengan hiu paus di Kwatisore,Terumbu karang yang indah dan masih alami,Pulau-pulau kecil dengan hutan bakau dan ekosistem laut langka,Kampung apung dan budaya pesisir\n\n',
     image: require('./assets/rajaampat.jpg'),
@@ -154,7 +155,6 @@ const data = [
 
 ];
 
-/* ---------- SCREENS ---------- */
 const Section = ({ route }) => {
   const { isDark } = useContext(ThemeContext);
   const styles = getStyles(isDark);
@@ -162,12 +162,7 @@ const Section = ({ route }) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Image
-        source={image}
-        style={styles.image}
-        resizeMode="cover"
-        defaultSource={require('./assets/placeholder.jpg')}
-      />
+      <Image source={image} style={styles.image} resizeMode="cover" />
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.content}>{content}</Text>
 
@@ -177,16 +172,10 @@ const Section = ({ route }) => {
           <FlatList
             data={extraImages}
             horizontal
-            showsHorizontalScrollIndicator={false}
             keyExtractor={(_, idx) => idx.toString()}
             renderItem={({ item }) => (
-              <Image
-                source={item}
-                style={styles.galleryImage}
-                resizeMode="cover"
-              />
+              <Image source={item} style={styles.galleryImage} />
             )}
-            contentContainerStyle={{ paddingVertical: 10 }}
           />
         </>
       )}
@@ -205,12 +194,7 @@ const ListScreen = ({ navigation }) => {
       keyExtractor={(item) => item.key}
       renderItem={({ item }) => (
         <View style={styles.card}>
-          <Image
-            source={item.image}
-            style={styles.image}
-            resizeMode="cover"
-            defaultSource={require('./assets/placeholder.jpg')}
-          />
+          <Image source={item.image} style={styles.image} resizeMode="cover" />
           <Text style={styles.title}>{item.title}</Text>
           <Text numberOfLines={3} style={styles.content}>
             {item.content}
@@ -235,7 +219,7 @@ const Cari = ({ navigation }) => {
 
   const handleSearch = (text) => {
     setQuery(text);
-    if (text.trim().length > 1) {
+    if (text.length > 1) {
       const filtered = data.filter(
         (item) =>
           item.title.toLowerCase().includes(text.toLowerCase()) ||
@@ -261,12 +245,7 @@ const Cari = ({ navigation }) => {
         keyExtractor={(item) => item.key}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Image
-              source={item.image}
-              style={styles.image}
-              resizeMode="cover"
-              defaultSource={require('./assets/placeholder.jpg')}
-            />
+            <Image source={item.image} style={styles.image} />
             <Text style={styles.title}>{item.title}</Text>
             <Text numberOfLines={3} style={styles.content}>
               {item.content}
@@ -299,7 +278,11 @@ const HomeTabs = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
       tabBarIcon: ({ color, size }) => {
-        const icons = { Beranda: 'home', Cari: 'search', Pengaturan: 'settings' };
+        const icons = {
+          Beranda: 'home',
+          Cari: 'search',
+          Pengaturan: 'settings',
+        };
         return <Ionicons name={icons[route.name]} size={size} color={color} />;
       },
       tabBarActiveTintColor: 'tomato',
@@ -313,17 +296,24 @@ const HomeTabs = () => (
   </Tab.Navigator>
 );
 
-/* ---------- APP ROOT ---------- */
 export default function App() {
-  const colorScheme = useColorScheme();
-  const [isDark, setIsDark] = useState(colorScheme === 'dark');
+  const [isDark, setIsDark] = useState(false);
+  const [hasSeenOnboarding, setHasSeenOnboarding] = useState(null);
 
   useEffect(() => {
-    AsyncStorage.getItem('theme').then((pref) => {
-      if (pref === 'dark') setIsDark(true);
-      if (pref === 'light') setIsDark(false);
-    });
-  }, []);
+  const loadSettings = async () => {
+    // Hapus untuk testing agar onboarding muncul lagi
+    await AsyncStorage.removeItem('hasSeenOnboarding');
+
+    const seen = await AsyncStorage.getItem('hasSeenOnboarding');
+    const themePref = await AsyncStorage.getItem('theme');
+    setHasSeenOnboarding(seen === 'true');
+    if (themePref === 'dark') setIsDark(true);
+    if (themePref === 'light') setIsDark(false);
+  };
+  loadSettings();
+}, []);
+
 
   const toggleTheme = async () => {
     const next = !isDark;
@@ -333,11 +323,19 @@ export default function App() {
 
   const themeValue = useMemo(() => ({ isDark, toggleTheme }), [isDark]);
 
+  if (hasSeenOnboarding === null) {
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+  }
+
   return (
     <ThemeContext.Provider value={themeValue}>
       <NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}>
         <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-        <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator
+          initialRouteName={hasSeenOnboarding ? 'Login' : 'Onboarding'}
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="Home" component={HomeTabs} />
@@ -348,7 +346,6 @@ export default function App() {
   );
 }
 
-/* ---------- STYLES ---------- */
 const getStyles = (isDark) =>
   StyleSheet.create({
     container: {
